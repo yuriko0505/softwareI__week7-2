@@ -33,6 +33,6 @@ int Judge_Churenpoto();
 int Judge_Ryuiso();
 int Judge_Shosusi_Daisusi();
 int Judge_Dora();
-int CalcScore();
+int CalcScore(int han);
 void Judge();
 #endif
