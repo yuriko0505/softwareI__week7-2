@@ -528,7 +528,8 @@ void Judge(){
     fu=CalcFu();
     score=CalcScore(han);
     printf("裏ドラ表示牌: %s\n",TileToStr(ura_dora_tile));
-    printf("役　:%s\n\n", yaku);
+    printf("役　:%s\n", yaku);
+    printf("---Result---\n");
     printf("%d符%d翻 %d点 %s\n",fu,han,score,score_name);
     return;
 }

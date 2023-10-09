@@ -36,9 +36,6 @@ void Init(){
 
 //ゲームに必要な情報を描画する関数
 void Draw(){
-    if(system("clear")){
-        fprintf(stderr,"Error: system(\"clear\") failed");
-    }
     printf("%s1局 %s家 ドラ表示牌: %s 残り%d牌\r\n\r\n",WindToStr(round_wind),WindToStr(player_wind),TileToStr(dora_tile),MAX_TURN-turn_cnt);
     for(int i=0;i<HEIGHT;i++){
         printf("  \x1b[42m  \x1b[49m"); //枠線を緑に
@@ -84,6 +81,7 @@ void Draw(){
         }
     }
     printf("\r\n");
+    fprintf(stdout, "\e[%dA", 13);
     //printf("(%d, %d): %s\r\n",y,x,TileToStr(field[y][x]));
 }
 int Judge_erase(int i, int j){
@@ -274,37 +272,43 @@ int main(){
     enum GAME_STATE game_state=TITLE;
     while((input[0]=getchar())!='.'){
         if(game_state==TITLE){
-            if(Title_Update()==1){
-                game_state=GAME;
-                Draw();
-            }else if(Title_Update()==-1){
-                break;
-            }else if(Title_Update()==2){
-                game_state=RANKING;
-                LoadRanking();
-                DrawRanking();
-            }
-            else{
-                Title_Draw();
+            switch (Title_Update()) {
+                case START:
+                    game_state=GAME;
+                    Draw();
+                    break;
+                case RANK:
+                    game_state=RANKING;
+                    LoadRanking();
+                    DrawRanking();
+                    break;
+                case QUIT:
+                    goto end;
+                default:
+                    break;
             }
         }
         else if(game_state==RANKING){
-            if(input[0]=='d'){
-                ranking_top+=3;
-                if(ranking_top>=ranking_num){
-                    ranking_top=ranking_num-1;
-                }
-            }else if(input[0]=='a'){
-                ranking_top-=3;
-                if(ranking_top<0){
-                    ranking_top=0;
-                }
-            }
-            if(input[0]=='r'){
-                game_state=TITLE;
-                Title_Draw();
-            }else{
-                DrawRanking();
+            switch (input[0]) {
+                case 'd':
+                    ranking_top+=3;
+                    if(ranking_top>=ranking_num){
+                        ranking_top=ranking_num-1;
+                    }
+                    break;
+                case 'a':
+                    ranking_top-=3;
+                    if(ranking_top<0){
+                        ranking_top=0;
+                    }
+                    break;
+                case 'r':
+                    game_state=TITLE;
+                    Title_Draw();
+                    break;
+                default:
+                    DrawRanking();
+                    break;
             }
         }
         else if(game_state==GAME){
@@ -327,6 +331,7 @@ int main(){
     }
     Draw();
     if (game_state == RESULT){
+        fprintf(stdout, "\e[%dB", 13);
         Judge();
         FILE *outputfile; 
         if((outputfile = fopen("score.txt", "a"))==NULL){
@@ -335,7 +340,9 @@ int main(){
         WriteScore(outputfile);
     }
     else if (game_state == GAMEOVER){
+        fprintf(stdout, "\e[%dB", 13);
         printf("GAMEOVER\n");
     }
+end:
     return 0;
 }

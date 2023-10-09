@@ -5,19 +5,16 @@
 #define TITLE_WIDTH 8
 int Title_Update(){
     if(input[0]=='s'){
-        return 1;
+        return START;
     }else if(input[0]=='r'){
-        return 2;
+        return RANK;
     }else if(input[0]=='q'){
-        return -1;
+        return QUIT;
     }
-    else return 0;
+    else return -1;
 }
 void Title_Draw(){
-    if(system("clear")){
-        fprintf(stderr,"Error\n");
-    }
-    printf("\r\n\r\n");
+    printf("\r\n\r\n\r\n");
     for(int i=0;i<TITLE_HEIGHT;i++){
         printf("  \x1b[42m  \x1b[49m");
         if (i == 2){
@@ -42,4 +39,5 @@ void Title_Draw(){
         printf("\x1b[42m  \x1b[49m");
     }
     printf("\x1b[42m  \x1b[49m\r\n");
+    fprintf(stdout, "\e[%dA", 11);
 }
